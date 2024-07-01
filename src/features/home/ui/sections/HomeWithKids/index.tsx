@@ -1,31 +1,63 @@
-import { useNavigation } from '@react-navigation/native'
-import { AppRoutes, Navigation } from 'app/navigators/types'
-import { Button, Container } from 'core/components'
-import { useState } from 'react'
-import { Text, TouchableOpacity } from 'react-native'
-import { ChevronDownIcon, CubeIcon, ChevronUpIcon } from 'react-native-heroicons/outline'
+import {useNavigation} from '@react-navigation/native';
+import {AppRoutes, Navigation} from 'app/navigators/types';
+import {Button, Container} from 'core/components';
+import {kidIdAtom} from 'features/kids/atoms/subscription';
+import {Kid} from 'features/kids/types/kids.types';
+import {useSetAtom} from 'jotai';
+import {useState} from 'react';
+import {Text, TouchableOpacity} from 'react-native';
+import {
+  ChevronDownIcon,
+  CubeIcon,
+  ChevronUpIcon,
+} from 'react-native-heroicons/outline';
 
-export function KidsCard() {
-  const navigation = useNavigation<Navigation>()
-  const [open, setOpen] = useState<boolean>(false)
+type KidCardProps = {
+  kid: Kid;
+};
+
+export function KidsCard({kid}: KidCardProps) {
+  const setKidIdAtom = useSetAtom(kidIdAtom);
+  const navigation = useNavigation<Navigation>();
+  const [open, setOpen] = useState<boolean>(false);
   const openHandle = () => {
-    setOpen(!open)
-  }
+    setOpen(!open);
+  };
   return (
     <Container flex={1} alignItems={'center'} backgroundColor="#F3F3F3" pt={20}>
-      <Container width={'90%'} backgroundColor="#FFF" minHeight={100} borderRadius={15} p={25}>
+      <Container
+        width={'90%'}
+        backgroundColor="#FFF"
+        minHeight={100}
+        borderRadius={15}
+        p={25}>
         <TouchableOpacity onPress={openHandle}>
           <Container flexDirection={'row'}>
-            <Text style={{ fontSize: 18, fontWeight: '600', lineHeight: 21, marginRight: 10 }}>
-              Mona Hadi
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '600',
+                lineHeight: 21,
+                marginRight: 10,
+              }}>
+              {kid.profile.first_name} {kid.profile.last_name}
             </Text>
-            {open ? <ChevronUpIcon color={'#000'} /> : <ChevronDownIcon color={'#000'} />}
+            {open ? (
+              <ChevronUpIcon color={'#000'} />
+            ) : (
+              <ChevronDownIcon color={'#000'} />
+            )}
           </Container>
         </TouchableOpacity>
         <Container>
-          <Container mt={15} width={'100%'} height={10} backgroundColor="#D9D9D9" borderRadius={10}>
+          <Container
+            mt={15}
+            width={'100%'}
+            height={10}
+            backgroundColor="#D9D9D9"
+            borderRadius={10}>
             <Container
-              width={'40%'}
+              width={kid.statistics.progress}
               backgroundColor="#FF8E34"
               height={10}
               borderRadius={10}></Container>
@@ -60,11 +92,16 @@ export function KidsCard() {
                       color: '#666',
                       marginLeft: 10,
                     }}>
-                    27%
+                    {kid.statistics.progress} %
                   </Text>
                 </Container>
               </Container>
-              <Container backgroundColor="#e5e5e5" height={1} width={'100%'} mt={3} />
+              <Container
+                backgroundColor="#e5e5e5"
+                height={1}
+                width={'100%'}
+                mt={3}
+              />
             </Container>
             <Container mt={3}>
               <Container
@@ -93,11 +130,16 @@ export function KidsCard() {
                       color: '#666',
                       marginLeft: 10,
                     }}>
-                    23
+                    {kid.statistics.remain_levels}
                   </Text>
                 </Container>
               </Container>
-              <Container backgroundColor="#e5e5e5" height={1} width={'100%'} mt={3} />
+              <Container
+                backgroundColor="#e5e5e5"
+                height={1}
+                width={'100%'}
+                mt={3}
+              />
             </Container>
             <Container mt={3}>
               <Container
@@ -126,11 +168,16 @@ export function KidsCard() {
                       color: '#666',
                       marginLeft: 10,
                     }}>
-                    2500
+                    {kid.statistics.level_scores}
                   </Text>
                 </Container>
               </Container>
-              <Container backgroundColor="#e5e5e5" height={1} width={'100%'} mt={3} />
+              <Container
+                backgroundColor="#e5e5e5"
+                height={1}
+                width={'100%'}
+                mt={3}
+              />
             </Container>
             <Container mt={3}>
               <Container
@@ -159,22 +206,36 @@ export function KidsCard() {
                       color: '#666',
                       marginLeft: 10,
                     }}>
-                    26
+                    {kid.statistics.max_level}
                   </Text>
                 </Container>
               </Container>
             </Container>
-            <Container mt={4} flexDirection={'row'} justifyContent={'space-around'}>
+            <Container
+              mt={4}
+              flexDirection={'row'}
+              justifyContent={'space-around'}>
               <Button
                 width={'60%'}
                 label="Details"
-                onPress={() => navigation.navigate(AppRoutes.KIDDETAILS)}
+                onPress={() => {
+                  setKidIdAtom(kid.id);
+                  navigation.navigate(AppRoutes.KIDDETAILS, {
+                    fullName:
+                      kid.profile.first_name + ' ' + kid.profile.last_name,
+                  });
+                }}
               />
-              <Button width={'30%'} label="Chart" variant="outlined" color="#000" />
+              <Button
+                width={'30%'}
+                label="Chart"
+                variant="outlined"
+                color="#000"
+              />
             </Container>
           </Container>
         ) : null}
       </Container>
     </Container>
-  )
+  );
 }
